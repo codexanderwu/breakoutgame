@@ -5,8 +5,7 @@
     <body>
       <canvas height = "500" width = "500" id = "ctx" style = "border:2px solid #000000"/>
       <script>
-
-        overflow:hidden
+        
         var ctx = document.getElementById('ctx').getContext('2d');
         var WIDTH = 500;
         var HEIGHT = 500;
