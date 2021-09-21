@@ -1,37 +1,221 @@
-## Welcome to GitHub Pages
+<html>
+  <head>
+<title> Breakout Game </title>
+    </head>
+    <body>
+      <canvas height = "500" width = "500" id = "ctx" style = "border:2px solid #000000"/>
+      <script>
 
-You can use the [editor on GitHub](https://github.com/codexanderwu/breakoutgame/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+        var ctx = document.getElementById('ctx').getContext('2d');
+        var WIDTH = 500;
+        var HEIGHT = 500;
+        var numOfTiles, tileList, score, intervalVar, hitCount, running = false;
+        ctx.font = '20 px Calibri';
+        ctx.fillText('Click me to start the game!',150,250)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+        var ball = {
+          x:0,
+          y:250,
+          radius:5,
+          color:'blue',
+          spdX:-5,
+          spdY:-5
+          };
 
-### Markdown
+          var base = {
+            x:0,
+            y:500,
+            height:20,
+            width:100,
+            color:'orange',
+            pressingLeft:false,
+            pressingRight:false,
+            lives:3
+          };
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+          var tile = {
+            height:20,
+            width:40,
+            color:'red'
+          };
 
-```markdown
-Syntax highlighted code block
+          running = false;
+          document.getElementById('ctx').onmousedown = function() {
+            if (running) {
+              clearInterval(intervalVar);
+              location.reload()
+            }
+            startGame();
+          }
 
-# Header 1
-## Header 2
-### Header 3
+          document.onkeydown = function(event) {
+            if (event.keyCode == 37) {
+              base.pressingLeft = true;
+              base.pressingRight = false;
+            }
+            else if (event.keyCode == 39) {
+              base.pressingLeft = false;
+              base.pressingRight = true;
+            }
+          }
 
-- Bulleted
-- List
+          document.onkeyup = function(event) {
+            if (event.keyCode == 37) {
+              base.pressingLeft = false;
+            }
+            else if (event.keyCode == 39) {
+              base.pressingRight = false;
+            }
+          }
 
-1. Numbered
-2. List
+          testCollision = function(base,ball) {
+            return ((base.x < ball.x + 2*ball.radius) &&
+                    (ball.x < base.x + base.width) &&
+                    (base.y < ball.y + 2*ball.radius) &&
+                    (ball.y < base.y + base.height));
+          }
+          testCollisionTile = function(t,ball) {
+            return ((t.x < ball.x + 2*ball.radius) &&
+                    (ball.x < t.x + tile.width) &&
+                    (t.y < ball.y + 2*ball.radius) &&
+                    (ball.y < t.y + tile.height));
+          }
 
-**Bold** and _Italic_ and `Code` text
+          drawBall = function() {
+            ctx.save();
+            ctx.fillStyle = ball.color;
+            ctx.beginPath();
+            ctx.arc(ball.x,ball.y,ball.radius,0,2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+          }
 
-[Link](url) and ![Image](src)
-```
+          drawBase = function() {
+            ctx.save();
+            ctx.fillStyle = base.color;
+            ctx.fillRect(base.x,base.y,base.width,base.height);
+            ctx.restore();
+          }
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+          drawTile = function(t,i) {
+            ctx.save();
+            ctx.fillStyle = tile.color;
+            ctx.fillRect(t.x,t.y,tile.width,tile.height);
+            ctx.restore();
+          }
 
-### Jekyll Themes
+          updateBasePosition = function() {
+            if (base.pressingLeft) {
+              base.x = base.x - 5;
+            }
+            else if (base.pressingRight) {
+              base.x = base.x + 5;
+            }
+            if (base.x < 0) {
+              base.x = 0;
+            }
+            if (base.x > WIDTH-base.width) {
+              base.x = WIDTH-base.width;
+            }
+          }
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/codexanderwu/breakoutgame/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+          updateBallPosition = function() {
+            ball.x += ball.spdX;
+            ball.y += ball.spdY;
+            if (ball.x > WIDTH || ball.x < 0) {
+              hitCount++;
+              if (hitCount % 5 == 0) {
+                if (ball.spdX < 0)
+                ball.spdX = -(Math.abs(ball.spdX)+ 1);
+                else
+                ball.spdX += 1;
+              }
+              ball.spdX = -ball.spdX;
+            }
+            if (ball.y < 0) {
+              hitCount++;
+              if (hitCount % 5 == 0) {
+                if (ball.spdY < 0)
+                ball.spdY = -(Math.abs(ball.spdY)+ 1);
+                else
+                ball.spdY += 1;
+              }
+              ball.spdY = -ball.spdY;
+            }
+            if (ball.y > HEIGHT) {
+              hitCount++;
+              if (hitCount % 5 == 0) {
+                if (ball.spdY < 0)
+                ball.spdY = -(Math.abs(ball.spdY)+ 1);
+                else
+                ball.spdX += 1;
+              }
+              ball.spdY = -ball.spdY;
+              base.lives--;
+            }
+          }
 
-### Support or Contact
+          isGameOver = function() {
+            if (base.lives==0) {
+              clearInterval(intervalVar);
+              ctx.fillText('Game Over! Click to restart.',150,250);
+            }
+            if (score == 300) {
+              clearInterval(intervalVar);
+              ctx.fillText('You win! Click to restart..',150,250);
+            }
+          }
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+          update = function() {
+            ctx.clearRect(0,0,WIDTH,HEIGHT);
+            tileList.forEach(drawTile);
+            drawBall();
+            drawBase();
+
+            if (testCollision(base,ball)) {
+              ball.spdY = -ball.spdY;
+            }
+
+            for(key in tileList) {
+              if (testCollisionTile(tileList[key],ball)) {
+                delete tileList[key];
+                ball.spdY = -ball.spdY;
+                score += 5;
+              }
+            }
+
+            ctx.fillText('Score: ' + score,5,490);
+            ctx.fillText("Lives: "+ base.lives,430,490)
+
+            isGameOver();
+            updateBasePosition();
+            updateBallPosition();
+          }
+
+          startGame = function() {
+            base.x = 150;
+            ball.x = base.x + 100;
+            base.y = base.y - 100;
+            numOfTiles = 0;
+            var tileX = 5;
+            var tileY = 5;
+            tileList = [];
+            score = 0;
+            base.lives = 3;
+            hitCount = 0;
+            running = true;
+            for (var i=1;i<=6;i++) {
+              tileX = 5;
+              for(var j=1;j<=10;j++) { //45*11 = 495
+                tileList[numOfTiles] = {x:tileX,y:tileY};
+                numOfTiles++;
+                tileX += 45; //50
+              }
+              tileY += 25;
+            }
+            intervalVar = setInterval(update,20);
+          }
+
+      </script>
+    </body>
+<html>
