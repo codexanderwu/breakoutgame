@@ -10,7 +10,7 @@
         var WIDTH = 500;
         var HEIGHT = 500;
         var numOfTiles, tileList, score, intervalVar, hitCount, running = false;
-        ctx.font = '20 px Calibri';
+        ctx.font = '20px Calibri';
         ctx.fillText('Click me to start the game!',150,250)
 
         var ball = {
