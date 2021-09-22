@@ -5,7 +5,7 @@
     <body>
       <canvas height = "500" width = "500" id = "ctx" style = "border:2px solid #000000"/>
       <script>
-        
+
         var ctx = document.getElementById('ctx').getContext('2d');
         var WIDTH = 500;
         var HEIGHT = 500;
@@ -160,9 +160,9 @@
               clearInterval(intervalVar);
               ctx.fillText('Game Over! Click to restart.',150,250);
             }
-            if (score == 300) {
+            if (score == 325) {
               clearInterval(intervalVar);
-              ctx.fillText('You win! Click to restart..',150,250);
+              ctx.fillText('You win! Click to restart.',150,250);
             }
           }
 
