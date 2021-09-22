@@ -160,7 +160,7 @@
               clearInterval(intervalVar);
               ctx.fillText('Game Over! Click to restart.',150,250);
             }
-            if (score == 325) {
+            if (score == 330) {
               clearInterval(intervalVar);
               ctx.fillText('You win! Click to restart.',150,250);
             }
