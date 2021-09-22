@@ -209,7 +209,7 @@
               for(var j=1;j<=10;j++) { //45*11 = 495
                 tileList[numOfTiles] = {x:tileX,y:tileY};
                 numOfTiles++;
-                tileX += 45; //50
+                tileX += 50; //50
               }
               tileY += 25;
             }
