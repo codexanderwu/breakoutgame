@@ -206,10 +206,10 @@
             running = true;
             for (var i=1;i<=6;i++) {
               tileX = 5;
-              for(var j=1;j<=10;j++) { //45*11 = 495
+              for(var j=1;j<=11;j++) { //45*11 = 495
                 tileList[numOfTiles] = {x:tileX,y:tileY};
                 numOfTiles++;
-                tileX += 50; //50
+                tileX += 45; //50
               }
               tileY += 25;
             }
